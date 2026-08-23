@@ -15,11 +15,11 @@ public class ReservationEventProducer {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void sendReservationCreatedEvent(ReservationCreatedEvent event) {
-        log.info("Publishing ReservationCreatedEvent to topic '{}': {}", KafkaTopicConfig.RESERVATION_EVENTS_TOPIC, event);
-        kafkaTemplate.send(KafkaTopicConfig.RESERVATION_EVENTS_TOPIC, event.bookingId().toString(), event);
+        log.info("Publishing ReservationCreatedEvent to topic '{}': {}", KafkaTopicConfig.RESERVATION_CREATED_TOPIC, event);
+        kafkaTemplate.send(KafkaTopicConfig.RESERVATION_CREATED_TOPIC, event.bookingId().toString(), event);
     }
     public void sendReservationStatusUpdatedEvent(ReservationStatusUpdatedEvent event) {
-        log.info("Publishing ReservationStatusUpdatedEvent to topic '{}': {}", KafkaTopicConfig.RESERVATION_EVENTS_TOPIC, event);
-        kafkaTemplate.send(KafkaTopicConfig.RESERVATION_EVENTS_TOPIC, event.bookingId().toString(), event);
+        log.info("Publishing ReservationStatusUpdatedEvent to topic '{}': {}", KafkaTopicConfig.RESERVATION_STATUS_UPDATED_TOPIC, event);
+        kafkaTemplate.send(KafkaTopicConfig.RESERVATION_STATUS_UPDATED_TOPIC, event.bookingId().toString(), event);
     }
 }

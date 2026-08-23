@@ -47,6 +47,9 @@ public class Reservation {
 
     @PrePersist
     protected void onCreate() {
+        if (this.status == null) {
+            this.status = BookingStatus.PENDING;
+        }
         this.createdAt = LocalDateTime.now();
     }
 }

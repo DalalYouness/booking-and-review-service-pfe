@@ -16,7 +16,7 @@ public class ReviewEventProducer {
 
     public void sendReviewCreatedEvent(ReviewCreatedEvent event)
     {
-        log.info("Publishing ReviewCreatedEvent to topic '{}': {}", KafkaTopicConfig.REVIEW_EVENTS_TOPIC, event);
-        kafkaTemplate.send(KafkaTopicConfig.REVIEW_EVENTS_TOPIC, event);
+        log.info("Publishing ReviewCreatedEvent to topic '{}': {}", KafkaTopicConfig.REVIEW_CREATED_TOPIC, event);
+        kafkaTemplate.send(KafkaTopicConfig.REVIEW_CREATED_TOPIC,event.reviewId().toString(), event);
     }
 }

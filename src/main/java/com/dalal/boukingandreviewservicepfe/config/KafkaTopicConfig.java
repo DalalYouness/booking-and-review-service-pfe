@@ -8,12 +8,21 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 public class KafkaTopicConfig {
 
-    public static final String RESERVATION_EVENTS_TOPIC = "reservation-events-topic";
-    public static final String REVIEW_EVENTS_TOPIC = "review-events-topic";
+    public static final String RESERVATION_CREATED_TOPIC = "reservation-created-topic";
+    public static final String RESERVATION_STATUS_UPDATED_TOPIC = "reservation-status-updated-topic";
+    public static final String REVIEW_CREATED_TOPIC = "review-created-topic";
 
     @Bean
-    public NewTopic reservationEventsTopic() {
-        return TopicBuilder.name(RESERVATION_EVENTS_TOPIC)
+    public NewTopic reservationCreatedTopic() {
+        return TopicBuilder.name(RESERVATION_CREATED_TOPIC)
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic reservationStatusUpdatedTopic() {
+        return TopicBuilder.name(RESERVATION_STATUS_UPDATED_TOPIC)
                 .partitions(1)
                 .replicas(1)
                 .build();
@@ -21,7 +30,7 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic reviewCreatedTopic() {
-        return TopicBuilder.name(REVIEW_EVENTS_TOPIC)
+        return TopicBuilder.name(REVIEW_CREATED_TOPIC)
                 .partitions(1)
                 .replicas(1)
                 .build();
