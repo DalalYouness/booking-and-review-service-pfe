@@ -18,5 +18,8 @@ public interface ReservationMapper {
     Reservation toEntity(ReservationCreateRequest request);
 
     // 2. Pour tous les retours (Entity -> Response DTO)
+    @Mapping(target = "providerName",ignore = true)
+    @Mapping(target = "clientName" ,ignore = true)
+    @Mapping(target = "serviceName", ignore = true)
     ReservationResponse toResponse(Reservation entity);
 }

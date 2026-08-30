@@ -9,6 +9,10 @@ import com.dalal.boukingandreviewservicepfe.entities.Reservation;
 import com.dalal.boukingandreviewservicepfe.enums.BookingStatus;
 import com.dalal.boukingandreviewservicepfe.exceptions.InvalidReservationStateException;
 import com.dalal.boukingandreviewservicepfe.exceptions.ResourceNotFoundException;
+import com.dalal.boukingandreviewservicepfe.feign.client.IdentityClient;
+import com.dalal.boukingandreviewservicepfe.feign.client.ServiceClient;
+import com.dalal.boukingandreviewservicepfe.feign.dto.ProfilSummaryDto;
+import com.dalal.boukingandreviewservicepfe.feign.dto.ServiceSummaryDto;
 import com.dalal.boukingandreviewservicepfe.mappers.ReservationMapper;
 import com.dalal.boukingandreviewservicepfe.messaging.ReservationEventProducer;
 import com.dalal.boukingandreviewservicepfe.repositories.ReservationRepository;
@@ -29,9 +33,11 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository reservationRepository;
     private final ReservationMapper reservationMapper;
 
+
+
     // --- Synchronous REST Clients (Validation - Deferred) ---
-//  private final UserClient userClient;
-//  private final ProviderClient providerClient;
+    private IdentityClient identityClient;
+    private ServiceClient serviceClient;
 
     // --- Asynchronous Event Publisher (Kafka - Deferred) ---
     private final ReservationEventProducer reservationEventProducer;
@@ -133,8 +139,27 @@ public class ReservationServiceImpl implements ReservationService {
         // 2. Fetch Page of Entities from Repository
         Page<Reservation> reservationPage = reservationRepository.findByIdClient(clientId, pageable);
 
-        // 3. Transform Page<Reservation> -> Page<ReservationResponse>
-        return reservationPage.map(reservationMapper::toResponse);
+        // 3. Transform Page<Reservation> -> Page<ReservationResponse> (Element par Element)
+        return reservationPage.map(reservation -> {
+
+            String clientName = fetchClientName(reservation.getIdClient());
+            String providerName = fetchProviderName(reservation.getIdProvider());
+            String serviceName = fetchServiceName(reservation.getIdService());
+
+
+            return new ReservationResponse(
+                    reservation.getId(),
+                    reservation.getDateRdv(),
+                    reservation.getDureeReel(),
+                    reservation.getStatus(),
+                    reservation.getIdClient(),
+                    reservation.getIdProvider(),
+                    reservation.getIdService(),
+                    providerName,
+                    clientName,
+                    serviceName
+            );
+        });
     }
 
     /* =====================
@@ -144,17 +169,68 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional(readOnly = true)
     public Page<ReservationResponse> getProviderReservations(Long providerId, Pageable pageable) {
-        // 1. Guard Clause: Protection against null inputs
+        // 1. Guard Clause
         if (providerId == null) {
             throw new IllegalArgumentException("Provider id cannot be null");
         }
 
-        // 2. Fetch Page of Entities from Repository
+        // 2. Fetch Page of Entities
         Page<Reservation> reservationPage = reservationRepository.findByIdProvider(providerId, pageable);
 
-        // 3. Transform Page<Reservation> -> Page<ReservationResponse>
-        return reservationPage.map(reservationMapper::toResponse);
+        // 3. Transform & Enrich Directly (مع الـ Fault Tolerance)
+        return reservationPage.map(reservation -> {
+
+            //  Client
+            String clientName = fetchClientName(reservation.getIdClient());
+
+            //   Provider
+            String providerName = fetchProviderName(reservation.getIdProvider());
+
+            //   Service
+            String serviceName = fetchServiceName(reservation.getIdService());
+
+            return new ReservationResponse(
+                    reservation.getId(),
+                    reservation.getDateRdv(),
+                    reservation.getDureeReel(),
+                    reservation.getStatus(),
+                    reservation.getIdClient(),
+                    reservation.getIdProvider(),
+                    reservation.getIdService(),
+                    providerName,
+                    clientName,
+                    serviceName
+            );
+        });
     }
+    /*-----------------------------start Helper methods------------------------------------*/
+    private String fetchClientName(Long clientId) {
+        try {
+            ProfilSummaryDto clientProfil = identityClient.getProfilDetail(clientId);
+            return (clientProfil != null) ? clientProfil.getFullName() : "Client #" + clientId;
+        } catch (Exception e) {
+            return "Client #" + clientId; // fault tolerance solution
+        }
+    }
+
+    private String fetchProviderName(Long providerId) {
+        try {
+            ProfilSummaryDto providerProfil = identityClient.getProfilDetail(providerId);
+            return (providerProfil != null) ? providerProfil.getFullName() : "Provider #" + providerId;
+        } catch (Exception e) {
+            return "Provider #" + providerId; // fault tolerance solution
+        }
+    }
+
+    private String fetchServiceName(Long serviceId) {
+        try {
+            ServiceSummaryDto serviceDto = serviceClient.getServiceSummary(serviceId);
+            return (serviceDto != null) ? serviceDto.serviceName() : "Service #" + serviceId;
+        } catch (Exception e) {
+            return "Service #" + serviceId; // fault tolerance solution
+        }
+    }
+    /*-----------------------------end Helper methods------------------------------------*/
 
     @Override
     public ReservationResponse rejectReservation(Long reservationId) {
