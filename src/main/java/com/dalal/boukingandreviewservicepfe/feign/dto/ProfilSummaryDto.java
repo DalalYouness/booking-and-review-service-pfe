@@ -7,7 +7,7 @@ public record ProfilSummaryDto(
         Long id,
         String firstName,
         String lastName,
-        String imgUrl
+        String photoUrl
 ) {
     public String getFullName() {
         return (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "").trim();

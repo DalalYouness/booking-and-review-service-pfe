@@ -36,8 +36,8 @@ public class ReservationServiceImpl implements ReservationService {
 
 
     // --- Synchronous REST Clients (Validation - Deferred) ---
-    private IdentityClient identityClient;
-    private ServiceClient serviceClient;
+    private final IdentityClient identityClient;
+    private final ServiceClient serviceClient;
 
     // --- Asynchronous Event Publisher (Kafka - Deferred) ---
     private final ReservationEventProducer reservationEventProducer;
@@ -177,7 +177,7 @@ public class ReservationServiceImpl implements ReservationService {
         // 2. Fetch Page of Entities
         Page<Reservation> reservationPage = reservationRepository.findByIdProvider(providerId, pageable);
 
-        // 3. Transform & Enrich Directly (مع الـ Fault Tolerance)
+        // 3. Transform & Enrich Directly
         return reservationPage.map(reservation -> {
 
             //  Client
@@ -205,30 +205,24 @@ public class ReservationServiceImpl implements ReservationService {
     }
     /*-----------------------------start Helper methods------------------------------------*/
     private String fetchClientName(Long clientId) {
-        try {
+
             ProfilSummaryDto clientProfil = identityClient.getProfilDetail(clientId);
-            return (clientProfil != null) ? clientProfil.getFullName() : "Client #" + clientId;
-        } catch (Exception e) {
-            return "Client #" + clientId; // fault tolerance solution
-        }
+            return clientProfil.getFullName();
+
     }
 
     private String fetchProviderName(Long providerId) {
-        try {
+
             ProfilSummaryDto providerProfil = identityClient.getProfilDetail(providerId);
-            return (providerProfil != null) ? providerProfil.getFullName() : "Provider #" + providerId;
-        } catch (Exception e) {
-            return "Provider #" + providerId; // fault tolerance solution
-        }
+            return providerProfil.getFullName();
+
     }
 
     private String fetchServiceName(Long serviceId) {
-        try {
+
             ServiceSummaryDto serviceDto = serviceClient.getServiceSummary(serviceId);
-            return (serviceDto != null) ? serviceDto.serviceName() : "Service #" + serviceId;
-        } catch (Exception e) {
-            return "Service #" + serviceId; // fault tolerance solution
-        }
+            return  serviceDto.serviceName() ;
+
     }
     /*-----------------------------end Helper methods------------------------------------*/
 
