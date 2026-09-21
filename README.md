@@ -13,7 +13,6 @@
   It combines REST APIs, persistence, security, service discovery, configuration management, and event-driven integration in one maintainable Spring Boot application.
 </p>
 
-[Explore the repository](https://github.com/DalalYouness/booking-and-review-service-pfe) · [Report a bug](https://github.com/DalalYouness/booking-and-review-service-pfe/issues) · [Request a feature](https://github.com/DalalYouness/booking-and-review-service-pfe/issues)
 
 </div>
 
