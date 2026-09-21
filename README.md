@@ -228,20 +228,6 @@ The generated OpenAPI specification is typically available at:
 http://localhost:8080/v3/api-docs
 ```
 
-## Testing
-
-Run the test suite with:
-
-```bash
-./mvnw test
-```
-
-For a complete verification including compilation and packaging:
-
-```bash
-./mvnw clean verify
-```
-
 ## Build and packaging
 
 Create a production-ready executable JAR with:
