@@ -6,13 +6,17 @@
 
 [![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Maven](https://img.shields.io/badge/Maven- build- C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)](https://maven.apache.org/)
 [![MySQL](https://img.shields.io/badge/MySQL-database-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![License](https://img.shields.io/badge/License-TBD-lightgrey?style=for-the-badge)](#license)
 
 <p>
   <strong>Booking & Review Service</strong> is a backend service designed to manage reservation and review workflows in a distributed application ecosystem.
   It combines REST APIs, persistence, security, service discovery, configuration management, and event-driven integration in one maintainable Spring Boot application.
+  This repository is part of the Home Service Platform project and was developed as part of my final-year master's project.
 </p>
 
+[Explore the repository](https://github.com/DalalYouness/booking-and-review-service-pfe) · [Report a bug](https://github.com/DalalYouness/booking-and-review-service-pfe/issues) · [Request a feature][...]
 
 </div>
 
@@ -46,6 +50,8 @@ This project is the booking and review bounded context of a broader platform. It
 - Publishing or consuming domain events through Apache Kafka.
 - Integrating with other services through OpenFeign.
 - Registering with Eureka and loading centralized configuration through Spring Cloud.
+
+This repository is part of the Home Service Platform project developed for my final-year master's project.
 
 > **Note:** The exact endpoint contracts and service URLs are defined by the implementation and the environment in which this service is deployed.
 
@@ -226,6 +232,20 @@ The generated OpenAPI specification is typically available at:
 
 ```text
 http://localhost:8080/v3/api-docs
+```
+
+## Testing
+
+Run the test suite with:
+
+```bash
+./mvnw test
+```
+
+For a complete verification including compilation and packaging:
+
+```bash
+./mvnw clean verify
 ```
 
 ## Build and packaging
